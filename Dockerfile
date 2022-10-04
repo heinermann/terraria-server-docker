@@ -1,9 +1,8 @@
 FROM ubuntu:jammy as builder
 
-ARG VERSION=latest
+ARG VERSION=1443
 
 ENV TERRARIA_VERSION=$VERSION \
-    LATEST_VERSION="" \
     PATH="/scripts:${PATH}" \
     TERRARIA_DIR=/root/.local/share/Terraria
 
@@ -18,11 +17,7 @@ RUN apt-get update -y && apt-get install -y unzip curl
 
 WORKDIR ${TERRARIA_DIR}
 
-RUN if [ "${TERRARIA_VERSION:-latest}" = "latest" ]; then \
-        echo "using latest version." \
-    &&  export LATEST_VERSION=$(get-terraria-version.sh) \
-    &&  export TERRARIA_VERSION=${LATEST_VERSION}; fi \
-    && echo "TERRARIA_VERSION=${TERRARIA_VERSION}" \
+RUN echo "TERRARIA_VERSION=${TERRARIA_VERSION}" \
     && echo "${TERRARIA_VERSION}" > ${TERRARIA_DIR}terraria-version.txt \
     && curl https://terraria.org/api/download/pc-dedicated-server/terraria-server-${TERRARIA_VERSION}.zip --output terraria-server.zip \  
     && unzip terraria-server.zip -d ${TERRARIA_DIR} && mv ${TERRARIA_DIR}/*/* ${TERRARIA_DIR} \
